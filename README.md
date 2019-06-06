@@ -93,3 +93,7 @@ Finished
 
 {'dirs': 6, 'rescued': 51, 'errors': 0, 'found': 57}
 ```
+
+
+# Aknowledgment
+Thanks to Joachim Metz for all the help with dfvfs!
