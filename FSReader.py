@@ -30,7 +30,7 @@ class FSReader:
         mediator = command_line.CLIVolumeScannerMediator()
         vol_scanner = volume_scanner.VolumeScanner(mediator=mediator)
         self.stats = {"errors": 0, "total": 0, "duplicates": 0}
-
+        self.hashes = {}
         self.base_path_specs = vol_scanner.GetBasePathSpecs(img)
 
         self.last_file = None
@@ -61,11 +61,26 @@ class FSReader:
         full_path = file_system.JoinPath([parent_full_path, file_entry.name])
         this_obj = EntryObject(file_entry, full_path)
 
+        # Check hashes
+        if file_entry.entry_type=="file" and this_obj.size:
+            if self.hashes.get(this_obj.hash):
+                this_obj.duplicate = ",".join(self.hashes.get(this_obj.hash))
+                self.hashes[this_obj.hash].append(full_path)
+            else:
+                self.hashes[this_obj.hash] = [full_path]
+
         this_obj.log(self.log_file)
+
+
+
+
+        # Update Stats
         self.stats['total'] += 1
         self.stats[file_entry.entry_type] = self.stats[file_entry.entry_type]+1 if self.stats.get(file_entry.entry_type) else 1
         if this_obj.duplicate:
             self.stats['duplicates'] += 1
+
+
 
         #     print(full_path)
         #     if not self._list_only_files or file_entry.IsFile():

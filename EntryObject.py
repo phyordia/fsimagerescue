@@ -13,14 +13,20 @@ class EntryObject:
         self.size = f_obj.tell()
         f_obj.seek(0)
         # to do
-        self.hash = 123
+        BLOCKSIZE = 65536
+        m = hashlib.sha256()
+        file_buffer = f_obj.read(BLOCKSIZE)
+        while len(file_buffer) > 0:
+            m.update(file_buffer)
+            file_buffer = f_obj.read(BLOCKSIZE)
+        self.hash = m.hexdigest()
 
         f_obj.close()
 
 
     def log(self, writer):
         # "entry_type,size,full_path,hash,duplicate"
-        s = "%s,%s,%s,%s,%s" % (self.obj.entry_type, self.size, self.full_path, self.hash, self.duplicate)
+        s = "%s|%s|%s|%s|%s" % (self.obj.entry_type, self.size, self.full_path, self.hash, self.duplicate)
 
         #TODO add a quiet mode
         print(s)
