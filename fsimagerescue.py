@@ -10,22 +10,34 @@ from dfvfs.helpers import command_line
 from dfvfs.helpers import volume_scanner
 from dfvfs.lib import errors
 from dfvfs.resolver import resolver
-
+from OutputWriters import FileOutputWriter
 import argparse
 
+
+
 class FSReader:
-    def __init__(self, img):
+    def __init__(self, img, log_file=None):
 
         mediator = command_line.CLIVolumeScannerMediator()
         vol_scanner = volume_scanner.VolumeScanner(mediator=mediator)
         self.stats = {"dirs": 0, "rescued":0, "errors": 0, "found": 0}
         self.base_path_specs = vol_scanner.GetBasePathSpecs(img)
+        self.last_file = None
+        self.log_file = FileOutputWriter(log_file) if log_file else None
 
-    def print_object(self, o, full_path):
+        if self.log_file:
+            self.log_file.Open()
+
+    def log_object(self, o, full_path):
+
         if o.IsDirectory():
-            print("dd", full_path)
+            s = "%s,%s"%("dd", full_path)
         elif o.IsFile():
-            print(o.GetFileObject().get_size(), full_path)
+            s = "%s,%s" % (o.GetFileObject().get_size(), full_path)
+        print(s)
+        if self.log_file:
+            pass
+            self.log_file.WriteFileEntry(s)
 
 
     def save_object(self, o, full_path, output_dir):
@@ -44,9 +56,11 @@ class FSReader:
             try:
                 with open(save_to, "wb") as f:
                     f.write(o.GetFileObject().read())
+                    o.GetFileObject().close()
                     self.stats['rescued'] += 1
             except Exception as e:
                 print("Cannot create file '%s'" % save_to)
+                print(e)
                 self.stats['errors'] += 1
 
     def _ListFileEntry(self, file_system, file_entry, parent_full_path, output_dir=None):
@@ -61,10 +75,11 @@ class FSReader:
         # Since every file system implementation can have their own path
         # segment separator we are using JoinPath to be platform and file system
         # type independent.
+        self.last_file = file_entry
         full_path = file_system.JoinPath([parent_full_path, file_entry.name])
         #     print(full_path)
         #     if not self._list_only_files or file_entry.IsFile():
-        self.print_object(file_entry, full_path)
+        self.log_object(file_entry, full_path)
         self.stats['found'] += 1
         if output_dir:
             self.save_object(file_entry, full_path, output_dir)
@@ -83,13 +98,20 @@ class FSReader:
                 return
             self._ListFileEntry(file_system, file_entry, '', output_dir=output_dir)
 
+        if self.log_file:
+            self.log_file.Close()
+
+
 
 
 if __name__ == "__main__":
     argument_parser = argparse.ArgumentParser(description=('List or Recover file entries in a directory or storage media image.'))
 
     argument_parser.add_argument('--output_dir', '-o', dest='output_dir', action='store', default=None,
-                                 help=('path of the output file, default is to output to stdout.'))
+                                 help=('path of the output directory to write files to'))
+
+    argument_parser.add_argument('--log', '-l', dest='log_file', action='store', default=None,
+                                 help=('path of the log file'))
 
     argument_parser.add_argument('source', nargs='?', action='store', metavar='image.raw',
         default=None, help='path of the directory or storage media image.')
@@ -104,10 +126,11 @@ if __name__ == "__main__":
 
     if not img:
         print("No image to read. Exiting")
+        argument_parser.print_help()
         sys.exit(0)
 
 
-    FSR = FSReader(img)
+    FSR = FSReader(img, log_file=options.log_file)
 
     FSR.recover_files(output_dir=output_dir)
 
