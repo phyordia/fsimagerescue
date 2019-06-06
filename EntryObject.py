@@ -1,4 +1,6 @@
 import hashlib
+import os
+import shutil
 
 class EntryObject:
 
@@ -32,6 +34,24 @@ class EntryObject:
         print(s)
 
         writer.WriteFileEntry(s)
+
+    def store(self, output_dir):
+        save_to = os.path.abspath(output_dir + "/" + self.full_path)
+
+        if self.obj.IsDirectory():
+            if not os.path.exists(save_to):
+                os.makedirs(save_to, exist_ok=True)
+
+        elif self.obj.IsFile():
+            dirname = os.path.dirname(save_to)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname, exist_ok=True)
+
+            f_obj = self.obj.GetFileObject()
+            with open(save_to, "wb") as f:
+                shutil.copyfileobj(f_obj, f)
+            f_obj.close()
+
     #
     #
     #

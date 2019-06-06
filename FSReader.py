@@ -16,22 +16,22 @@ class FSReader:
     def __init__(self, img, output_dir=None, dedup=False, log_file=None):
 
         self.img = img
+
         # mkdirs
         if output_dir:
-            self.output_dir = os.path.abspath(output_dir+"/"+self.img)
+            self.output_dir = os.path.abspath(output_dir+"/"+os.path.basename(self.img))
             if not os.path.exists(self.output_dir):
-                os.makedirs(self.output_dir)
+                os.makedirs(self.output_dir, exist_ok=True)
 
-            if dedup:
-                self.dedup_dir = self.output_dir+"_duplicates"
-                if not os.path.exists(self.dedup_dir):
-                    os.makedirs(self.dedup_dir)
+            self.dedup_dir = self.output_dir+"_duplicates"
+            if not os.path.exists(self.dedup_dir):
+                os.makedirs(self.dedup_dir, exist_ok=True)
 
         mediator = command_line.CLIVolumeScannerMediator()
         vol_scanner = volume_scanner.VolumeScanner(mediator=mediator)
         self.stats = {"errors": 0, "total": 0, "duplicates": 0}
         self.hashes = {}
-        self.base_path_specs = vol_scanner.GetBasePathSpecs(img)
+        self.base_path_specs = vol_scanner.GetBasePathSpecs(self.img)
 
         self.last_file = None
         self.log_file = FileOutputWriter(log_file) if log_file else None
@@ -71,9 +71,13 @@ class FSReader:
 
         this_obj.log(self.log_file)
 
-
-
-
+        if self.output_dir:
+            try:
+                this_obj.store(self.dedup_dir if this_obj.duplicate else self.output_dir)
+            except Exception as e:
+                print("\n\n!!! ERROR")
+                print(e)
+                print("\n\n")
         # Update Stats
         self.stats['total'] += 1
         self.stats[file_entry.entry_type] = self.stats[file_entry.entry_type]+1 if self.stats.get(file_entry.entry_type) else 1
