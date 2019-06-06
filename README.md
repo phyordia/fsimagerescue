@@ -58,11 +58,7 @@ The output format is "type,size,path"
 Example:
 ```
 [...]
-file,57655,/DIY Pedals/schematics/result.png
-directory,0,/DIY Pedals/schematics/output
-file,57075,/DIY Pedals/schematics/output/fuzzfaceout.png
-file,6148,/DIY Pedals/schematics/output/.DS_Store
-file,55670,/DIY Pedals/schematics/output/out.png
+
 
 Finished
 

@@ -82,14 +82,15 @@ class FileOutputWriter(OutputWriter):
         # Using binary mode to make sure to write Unix end of lines, so we can
         # compare output files cross-platform.
         self._file_object = open(self._path, 'wb')
+        self.WriteFileEntry("entry_type,size,full_path,hash,duplicate")
 
-    def WriteFileEntry(self, path):
+    def WriteFileEntry(self, s):
         """Writes the file path to file.
 
         Args:
           path (str): path of the file.
         """
-        string = '{0:s}\n'.format(path)
+        s = '{0:s}\n'.format(s)
 
-        encoded_string = self._EncodeString(string)
+        encoded_string = self._EncodeString(s)
         self._file_object.write(encoded_string)
