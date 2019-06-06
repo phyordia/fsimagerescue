@@ -1,7 +1,7 @@
 #This requires installing dfvfs, pytsk (whih includes sleuthkit)
 
 
-import logging
+import json
 import os
 from dfvfs.analyzer import analyzer
 from dfvfs.analyzer import fvde_analyzer_helper
@@ -64,7 +64,7 @@ class FSReader:
         # Check hashes
         if file_entry.entry_type=="file" and this_obj.size:
             if self.hashes.get(this_obj.hash):
-                this_obj.duplicate = ",".join(self.hashes.get(this_obj.hash))
+                this_obj.duplicate = True
                 self.hashes[this_obj.hash].append(full_path)
             else:
                 self.hashes[this_obj.hash] = [full_path]
@@ -111,4 +111,7 @@ class FSReader:
         if self.log_file:
             self.log_file.Close()
             self.err_log_file.Close()
+            with open(self.output_dir+"/hashes.json", "w") as f:
+                json.dump(self.hashes, f)
+
 
