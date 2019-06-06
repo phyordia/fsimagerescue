@@ -46,3 +46,50 @@ python fsimagerescue.py testAPFS.dmg
 ```bash
 python fsimagerescue.py --output_dir rescued/ testAPFS.dmg
 ```
+
+
+## Output
+
+The output format is "<size in bytes (files) or "dd" (directory)> <path>"
+
+Example:
+```
+[...]
+dd /DIY Pedals/qucs_schematics
+424 /DIY Pedals/qucs_schematics/Untitled.dpl
+3435 /DIY Pedals/qucs_schematics/Untitled.dat
+936 /DIY Pedals/qucs_schematics/Untitled.sch
+668 /DIY Pedals/MyElectronicNotes.md
+1561545 /DIY Pedals/advanced-DIY-806 (2006) - Wampler.pdf
+7921521 /DIY Pedals/4-v021.pdf
+dd /DIY Pedals/schematics
+59047 /DIY Pedals/schematics/fuzzfaceout.png
+108391 /DIY Pedals/schematics/mu-amp_OD-Distortion.png
+6148 /DIY Pedals/schematics/.DS_Store
+4221 /DIY Pedals/schematics/draw.txt
+59356 /DIY Pedals/schematics/out.png
+57655 /DIY Pedals/schematics/result.png
+dd /DIY Pedals/schematics/output
+57075 /DIY Pedals/schematics/output/fuzzfaceout.png
+6148 /DIY Pedals/schematics/output/.DS_Store
+55670 /DIY Pedals/schematics/output/out.png
+37100 /DIY Pedals/schematics/output/result.png
+45 /DIY Pedals/schematics/output/mu-amp_OD-Distortion.png.txt
+67 /DIY Pedals/schematics/output/out.png.txt
+270 /DIY Pedals/schematics/output/jfet_ac30.png.txt
+138 /DIY Pedals/schematics/output/fuzzfaceout.png.txt
+51806 /DIY Pedals/schematics/output/jfet_ac30.png
+128 /DIY Pedals/schematics/output/jfet_clean_boost.png.txt
+0 /DIY Pedals/schematics/output/result.png.txt
+81999 /DIY Pedals/schematics/fuzzface.png
+50993 /DIY Pedals/schematics/jfet_clean_boost.png
+89134 /DIY Pedals/schematics/jfet_ac30.png
+1118 /DIY Pedals/schematics/mask.png
+76925 /DIY Pedals/schematics/result-0.png
+1118 /DIY Pedals/schematics/result-1.png
+
+
+Finished
+
+{'dirs': 6, 'rescued': 51, 'errors': 0, 'found': 57}
+```
