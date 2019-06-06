@@ -31,13 +31,9 @@ class FSReader:
     def log_object(self, o, full_path):
         f_obj = o.GetFileObject()
 
-        if o.IsDirectory():
-            s = "%s,%s"%("dd", full_path)
-        elif o.IsFile():
-            s = "%s,%s" % (f_obj.get_size(), full_path)
+        s = "%s,%s,%s" % (o.entry_type, f_obj.get_size(), full_path)
         print(s)
         if self.log_file:
-            pass
             self.log_file.WriteFileEntry(s)
 
         f_obj.close()

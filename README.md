@@ -53,25 +53,16 @@ python fsimagerescue.py --output_dir rescued/ --log fsimage.log.txt testAPFS.dmg
 
 ## Output
 
-The output format is "<size in bytes (files) or "dd" (directory)>,<path>"
+The output format is "type,size,path"
 
 Example:
 ```
 [...]
-45,/DIY Pedals/schematics/output/mu-amp_OD-Distortion.png.txt
-67,/DIY Pedals/schematics/output/out.png.txt
-270,/DIY Pedals/schematics/output/jfet_ac30.png.txt
-138,/DIY Pedals/schematics/output/fuzzfaceout.png.txt
-51806,/DIY Pedals/schematics/output/jfet_ac30.png
-128,/DIY Pedals/schematics/output/jfet_clean_boost.png.txt
-0,/DIY Pedals/schematics/output/result.png.txt
-81999,/DIY Pedals/schematics/fuzzface.png
-50993,/DIY Pedals/schematics/jfet_clean_boost.png
-89134,/DIY Pedals/schematics/jfet_ac30.png
-1118,/DIY Pedals/schematics/mask.png
-76925,/DIY Pedals/schematics/result-0.png
-1118,/DIY Pedals/schematics/result-1.png
-
+file,57655,/DIY Pedals/schematics/result.png
+directory,0,/DIY Pedals/schematics/output
+file,57075,/DIY Pedals/schematics/output/fuzzfaceout.png
+file,6148,/DIY Pedals/schematics/output/.DS_Store
+file,55670,/DIY Pedals/schematics/output/out.png
 
 Finished
 
