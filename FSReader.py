@@ -10,23 +10,40 @@ from dfvfs.helpers import volume_scanner
 from dfvfs.lib import errors
 from dfvfs.resolver import resolver
 from OutputWriters import FileOutputWriter
-
+from EntryObject import EntryObject
 
 class FSReader:
     def __init__(self, img, output_dir=None, dedup=False, log_file=None):
 
+        self.img = img
+        # mkdirs
+        if output_dir:
+            self.output_dir = os.path.abspath(output_dir+"/"+self.img)
+            if not os.path.exists(self.output_dir):
+                os.makedirs(self.output_dir)
+
+            if dedup:
+                self.dedup_dir = self.output_dir+"_duplicates"
+                if not os.path.exists(self.dedup_dir):
+                    os.makedirs(self.dedup_dir)
+
         mediator = command_line.CLIVolumeScannerMediator()
         vol_scanner = volume_scanner.VolumeScanner(mediator=mediator)
-        self.stats = {"dirs": 0, "rescued":0, "errors": 0, "found": 0}
+        self.stats = {"errors": 0, "total": 0, "duplicates": 0}
+
         self.base_path_specs = vol_scanner.GetBasePathSpecs(img)
+
         self.last_file = None
         self.log_file = FileOutputWriter(log_file) if log_file else None
+        self.err_log_file = FileOutputWriter(log_file+".err.txt") if log_file else None
+
 
         if self.log_file:
             self.log_file.Open()
+            self.err_log_file.Open()
 
 
-    def _ListFileEntry(self, file_system, file_entry, parent_full_path, output_dir=None):
+    def _ListFileEntry(self, file_system, file_entry, parent_full_path):
         """Lists a file entry.
 
         Args:
@@ -42,16 +59,21 @@ class FSReader:
         # file_entry_f = file_entry.GetFileObject()
 
         full_path = file_system.JoinPath([parent_full_path, file_entry.name])
+        this_obj = EntryObject(file_entry, full_path)
+
+        this_obj.log(self.log_file)
+
+
         #     print(full_path)
         #     if not self._list_only_files or file_entry.IsFile():
-        self.log_object(file_entry, full_path)
-        self.stats['found'] += 1
-        if output_dir:
-            self.save_object(file_entry, full_path, output_dir)
+        # self.log_object(file_entry, full_path)
+        # self.stats['found'] += 1
+        # if output_dir:
+        #     self.save_object(file_entry, full_path, output_dir)
 
 
         for sub_file_entry in file_entry.sub_file_entries:
-            self._ListFileEntry(file_system, sub_file_entry, full_path, output_dir)
+            self._ListFileEntry(file_system, sub_file_entry, full_path)
 
 
     def recover_files(self, output_dir=None):
@@ -62,8 +84,9 @@ class FSReader:
             if file_entry is None:
                 print('Unable to open base path specification:\n{0:s}'.format(base_path_spec.comparable))
                 return
-            self._ListFileEntry(file_system, file_entry, '', output_dir=output_dir)
+            self._ListFileEntry(file_system, file_entry, '')
 
         if self.log_file:
             self.log_file.Close()
+            self.err_log_file.Close()
 

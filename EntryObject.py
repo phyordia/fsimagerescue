@@ -20,7 +20,7 @@ class EntryObject:
 
     def log(self, writer):
         # "entry_type,size,full_path,hash,duplicate"
-        s = "%s,%s,%s,%s,%s" % (self.obj.entry_type, self.get_size(), self.full_path, self.hash, self.duplicate)
+        s = "%s,%s,%s,%s,%s" % (self.obj.entry_type, self.size, self.full_path, self.hash, self.duplicate)
 
         #TODO add a quiet mode
         print(s)
