@@ -75,15 +75,11 @@ Example:
 
 Finished
 
-<<<<<<< HEAD
  {'dirs': 6, 'rescued': 51, 'errors': 0, 'found': 57}
 
-```
-=======
-{'dirs': 6, 'rescued': 51, 'errors': 0, 'found': 57}
+
 ```
 
 
 # Aknowledgment
 Thanks to Joachim Metz for all the help with dfvfs!
->>>>>>> 240ddfe3f9d97189ed5add566e17c023ea61a72b
