@@ -29,19 +29,22 @@ class FSReader:
             self.log_file.Open()
 
     def log_object(self, o, full_path):
+        f_obj = o.GetFileObject()
 
         if o.IsDirectory():
             s = "%s,%s"%("dd", full_path)
         elif o.IsFile():
-            s = "%s,%s" % (o.GetFileObject().get_size(), full_path)
+            s = "%s,%s" % (f_obj.get_size(), full_path)
         print(s)
         if self.log_file:
             pass
             self.log_file.WriteFileEntry(s)
 
+        f_obj.close()
 
     def save_object(self, o, full_path, output_dir):
         save_to = os.path.abspath(output_dir + "/" + full_path)
+        f_obj = o.GetFileObject()
 
         if o.IsDirectory():
             try:
@@ -55,13 +58,14 @@ class FSReader:
         elif o.IsFile():
             try:
                 with open(save_to, "wb") as f:
-                    f.write(o.GetFileObject().read())
-                    o.GetFileObject().close()
+                    f.write(f_obj.read())
                     self.stats['rescued'] += 1
             except Exception as e:
                 print("Cannot create file '%s'" % save_to)
                 print(e)
                 self.stats['errors'] += 1
+
+        f_obj.close()
 
     def _ListFileEntry(self, file_system, file_entry, parent_full_path, output_dir=None):
         """Lists a file entry.
@@ -76,6 +80,8 @@ class FSReader:
         # segment separator we are using JoinPath to be platform and file system
         # type independent.
         self.last_file = file_entry
+        # file_entry_f = file_entry.GetFileObject()
+
         full_path = file_system.JoinPath([parent_full_path, file_entry.name])
         #     print(full_path)
         #     if not self._list_only_files or file_entry.IsFile():
@@ -83,6 +89,7 @@ class FSReader:
         self.stats['found'] += 1
         if output_dir:
             self.save_object(file_entry, full_path, output_dir)
+
 
         for sub_file_entry in file_entry.sub_file_entries:
             self._ListFileEntry(file_system, sub_file_entry, full_path, output_dir)
