@@ -62,7 +62,10 @@ class FSReader:
         this_obj = EntryObject(file_entry, full_path)
 
         this_obj.log(self.log_file)
-
+        self.stats['total'] += 1
+        self.stats[file_entry.entry_type] = self.stats[file_entry.entry_type]+1 if self.stats.get(file_entry.entry_type) else 1
+        if this_obj.duplicate:
+            self.stats['duplicates'] += 1
 
         #     print(full_path)
         #     if not self._list_only_files or file_entry.IsFile():

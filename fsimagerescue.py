@@ -11,6 +11,9 @@ if __name__ == "__main__":
     argument_parser.add_argument('--log', '-l', dest='log_file', action='store', default=None,
                                  help=('path of the log file'))
 
+    argument_parser.add_argument('--deduplicate', '-d', dest='dedup', action='store', default=None,
+                                 help=('separate duplicate files'))
+
     argument_parser.add_argument('source', nargs='?', action='store', metavar='image.raw',
         default=None, help='path of the directory or storage media image.')
 
