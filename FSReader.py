@@ -75,7 +75,7 @@ class FSReader:
             try:
                 this_obj.store(self.dedup_dir if this_obj.duplicate else self.output_dir)
             except Exception as e:
-                print("\n\n!!! ERROR")
+                print("\n\n!!! ERROR storing %s"%full_path)
                 print(e)
                 print("\n\n")
         # Update Stats
@@ -93,9 +93,14 @@ class FSReader:
         # if output_dir:
         #     self.save_object(file_entry, full_path, output_dir)
 
+        try:
+            for sub_file_entry in file_entry.sub_file_entries:
+                self._ListFileEntry(file_system, sub_file_entry, full_path)
 
-        for sub_file_entry in file_entry.sub_file_entries:
-            self._ListFileEntry(file_system, sub_file_entry, full_path)
+        except Exception as e:
+            self.stats["errors"] += 1
+            self.err_log_file.WriteFileEntry("%s|%s"%(full_path, e))
+            print("%s|%s" % (full_path, e))
 
 
     def recover_files(self, output_dir=None):

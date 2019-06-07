@@ -73,6 +73,8 @@ class FileOutputWriter(OutputWriter):
         self._file_object = None
         self._path = path
 
+        self.cached_strings = []
+
     def Close(self):
         """Closes the output writer object."""
         self._file_object.close()
@@ -83,6 +85,7 @@ class FileOutputWriter(OutputWriter):
         # compare output files cross-platform.
         self._file_object = open(self._path, 'wb')
         self.WriteFileEntry("entry_type|size|full_path|hash|duplicate")
+
 
     def WriteFileEntry(self, s):
         """Writes the file path to file.
