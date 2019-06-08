@@ -107,7 +107,7 @@ class FSReader:
             self.stats['total'] += 1
             self.stats[file_entry.entry_type] = self.stats[file_entry.entry_type]+1 if self.stats.get(file_entry.entry_type) else 1
             if this_obj.duplicate:
-                print(Fore.YELLOW+"%s DUPLICATE")
+                print(Fore.YELLOW+"DUPLICATE")
                 print(Style.RESET_ALL)
 
                 self.stats['duplicates'] += 1
