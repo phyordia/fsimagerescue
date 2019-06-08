@@ -79,13 +79,11 @@ class FileOutputWriter(OutputWriter):
         """Closes the output writer object."""
         self._file_object.close()
 
-    def Open(self):
+    def Open(self, mode):
         """Opens the output writer object."""
         # Using binary mode to make sure to write Unix end of lines, so we can
         # compare output files cross-platform.
-        self._file_object = open(self._path, 'wb')
-        self.WriteFileEntry("entry_type|size|full_path|hash|duplicate")
-
+        self._file_object = open(self._path, mode)
 
     def WriteFileEntry(self, s):
         """Writes the file path to file.

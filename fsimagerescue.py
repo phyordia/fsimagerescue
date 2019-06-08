@@ -2,17 +2,22 @@ import sys
 import argparse
 from FSReader import FSReader
 
+from colorama import init
+init()
+
 if __name__ == "__main__":
+
     argument_parser = argparse.ArgumentParser(description=('List or Recover file entries in a directory or storage media image.'))
 
     argument_parser.add_argument('--output_dir', '-o', dest='output_dir', action='store', default=None,
                                  help=('path of the output directory to write files to'))
 
-    argument_parser.add_argument('--log', '-l', dest='log_file', action='store', default=None,
-                                 help=('path of the log file'))
-
     argument_parser.add_argument('--deduplicate', '-d', dest='dedup', action='store_true', default=None,
                                  help=('separate duplicate files'))
+
+
+    argument_parser.add_argument('--resume', '-r', dest='resume', action='store_true', default=None,
+                                 help=('continue from last file in the log'))
 
     argument_parser.add_argument('source', nargs='?', action='store', metavar='image.raw',
         default=None, help='path of the directory or storage media image.')
@@ -31,7 +36,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
 
-    FSR = FSReader(img, output_dir=output_dir, dedup=options.dedup, log_file=options.log_file)
+    FSR = FSReader(img, output_dir=output_dir, dedup=options.dedup, resume=options.resume)
 
     FSR.recover_files()
 
