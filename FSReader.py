@@ -13,6 +13,7 @@ from dfvfs.resolver import resolver
 from OutputWriters import FileOutputWriter
 from EntryObject import EntryObject
 from colorama import Fore, Back, Style
+import humanize
 
 class FSReader:
     def __init__(self, img, output_dir=None, dedup=False, resume=False):
@@ -53,7 +54,7 @@ class FSReader:
 
         mediator = command_line.CLIVolumeScannerMediator()
         vol_scanner = volume_scanner.VolumeScanner(mediator=mediator)
-        self.stats = {"errors": 0, "total": 0, "duplicates": 0}
+        self.stats = {"errors": 0, "total": 0, "duplicates": 0, "total_size": 0}
         self.hashes = {}
         self.base_path_specs = vol_scanner.GetBasePathSpecs(self.img)
 
@@ -105,11 +106,9 @@ class FSReader:
 
             # Update Stats
             self.stats['total'] += 1
+            self.stats['total_size'] += this_obj.size
             self.stats[file_entry.entry_type] = self.stats[file_entry.entry_type]+1 if self.stats.get(file_entry.entry_type) else 1
             if this_obj.duplicate:
-                print(Fore.YELLOW+"DUPLICATE")
-                print(Style.RESET_ALL)
-
                 self.stats['duplicates'] += 1
 
         for sub_file_entry in file_entry.sub_file_entries:

@@ -1,6 +1,7 @@
 import sys
 import argparse
 from FSReader import FSReader
+import humanize
 
 from colorama import init
 init()
@@ -40,4 +41,6 @@ if __name__ == "__main__":
 
     FSR.recover_files()
 
-    print("\n\nFinished\n\n",FSR.stats)
+    print("\n\nFinished\n\n")
+    for k,v in FSR.stats.items():
+        print("%s: %s"%(k, v if k != "total_size" else humanize.naturalsize(v)))

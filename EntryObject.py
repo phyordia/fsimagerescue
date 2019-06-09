@@ -1,6 +1,8 @@
 import hashlib
 import os
 import shutil
+from colorama import Fore, Style
+import humanize
 
 class EntryObject:
 
@@ -28,15 +30,17 @@ class EntryObject:
 
     def log(self, writer):
         # "entry_type,size,full_path,hash,duplicate"
-        s = "%s|%s|%s|%s|%s" % (self.obj.entry_type, self.size, self.full_path, self.hash, self.duplicate)
+        s = "%s|%s|%s|%s|%s" % (self.obj.entry_type, humanize.naturalsize(self.size), self.full_path, self.hash, self.duplicate)
+
 
         #TODO add a quiet mode
-        print(s)
+        print(Fore.YELLOW + " >> DUPLICATE >> " + Style.RESET_ALL + s if self.duplicate else s)
 
         writer.WriteFileEntry(s)
 
     def store(self, output_dir):
         save_to = os.path.abspath(output_dir + "/" + self.full_path)
+        print(save_to)
 
         if self.obj.IsDirectory():
             if not os.path.exists(save_to):
